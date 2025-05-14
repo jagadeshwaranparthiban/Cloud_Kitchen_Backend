@@ -19,6 +19,12 @@ target/
 *.iml
 *.ipr
 
+### Spring Boot sensitive configs ###
+application.properties
+application-*.properties
+application.yml
+application-*.yml
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
