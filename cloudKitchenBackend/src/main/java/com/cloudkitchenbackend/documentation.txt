@@ -1,0 +1,20 @@
+Cloud Kitchen Application Backend
+
+Functionalities: ROLE_USER
+    1. Register
+    2. View menu items
+    3. place order
+        input: customer name, items (item, quantity)
+        output: on valid order place,
+                order ID, total amount(including tax), tax, status
+    4. Cancel order
+        input: Customer name, order ID
+        output: On valid cancellation,
+                cancellation message
+
+Functionalities: ROLE_ADMIN
+    1. View menu items
+    2. Add Item
+    3. Remove Item
+    4. Modify Item (name, description, price)
+    5. Manage users
