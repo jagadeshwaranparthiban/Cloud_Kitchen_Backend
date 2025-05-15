@@ -4,14 +4,19 @@ import com.cloudkitchenbackend.dto.ItemInfoDto;
 import com.cloudkitchenbackend.dto.OrderCancelRequest;
 import com.cloudkitchenbackend.dto.OrderRequestDto;
 import com.cloudkitchenbackend.dto.OrderResponseDto;
+import com.cloudkitchenbackend.exception.InvalidCustomerException;
 import com.cloudkitchenbackend.exception.ItemNotFoundException;
 import com.cloudkitchenbackend.exception.OrderNotFoundException;
+import com.cloudkitchenbackend.exception.UserNotFoundException;
 import com.cloudkitchenbackend.model.Item;
 import com.cloudkitchenbackend.model.OrderItem;
 import com.cloudkitchenbackend.model.Orders;
+import com.cloudkitchenbackend.model.Users;
 import com.cloudkitchenbackend.repository.ItemRepo;
 import com.cloudkitchenbackend.repository.OrderItemRepo;
 import com.cloudkitchenbackend.repository.OrdersRepo;
+import com.cloudkitchenbackend.repository.UserRepo;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,23 +30,32 @@ public class OrderService {
     private OrdersRepo ordersRepo;
     private ItemRepo itemRepo;
     private OrderItemRepo orderItemRepo;
+    private UserRepo userRepo;
 
     @Autowired
-    public OrderService(OrdersRepo ordersRepo, ItemRepo itemRepo, OrderItemRepo orderItemRepo){
+    public OrderService(OrdersRepo ordersRepo, ItemRepo itemRepo, OrderItemRepo orderItemRepo,
+                        UserRepo userRepo){
         this.ordersRepo=ordersRepo;
         this.itemRepo=itemRepo;
         this.orderItemRepo=orderItemRepo;
+        this.userRepo=userRepo;
     }
 
     public OrderResponseDto createOrder(OrderRequestDto requestedOrder) {
+        String custName=requestedOrder.getCustomerName();
+        Optional<Users> customer=userRepo.findByUserName(custName);
+        if(customer.isEmpty()) throw new UserNotFoundException("Invalid user!");
 
         Orders order=new Orders();
         order.setCustomerName(requestedOrder.getCustomerName());
         List<OrderItem> orderItemList = new ArrayList<>();
         double total = 0.0;
+
         for(ItemInfoDto itemInfo: requestedOrder.getItems()){
             Item item = itemRepo.findByItemName(itemInfo.getItemName())
                     .orElseThrow(() -> new ItemNotFoundException("Item not found: " + itemInfo.getItemName()));
+            //if(!item.isAvailable()) throw new RuntimeException("Item "+item.getItemName()+" is currently unavailable");
+
             OrderItem orderItem=new OrderItem();
             orderItem.setOrder(order);
             orderItem.setItem(item);
@@ -69,18 +83,19 @@ public class OrderService {
         Optional<Orders> order=ordersRepo.findByOrderId(cancel_request.getOrderId());
         if(order.isEmpty()){
             throw new OrderNotFoundException("Order ID: "+cancel_request.getOrderId()+" not found.");
+        }if(!order.get().getCustomerName().equals(cancel_request.getCustomerName())){
+            throw new InvalidCustomerException("Invalid Customer");
         }
         long cancelOrderId=order.get().getOrderId();
-        double refund=refundAmount(cancelOrderId);
+        double refund=refundAmount(order.get());
 
         orderItemRepo.deleteByOrderId(cancelOrderId);
         ordersRepo.delete(order.get());
         return "Order cancelled successfully. Your refund: Rs."+refund;
     }
 
-    public double refundAmount(long orderId){
-        Optional<Orders> order=ordersRepo.findByOrderId(orderId);
-        double amt=order.get().getTotalCost();
+    public double refundAmount(Orders order){
+        double amt=order.getTotalCost();
         return amt-(0.1*amt);
     }
 }
