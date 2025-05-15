@@ -14,6 +14,8 @@ public class Item {
     private String description;
     private String imageUrl;
     private double price;
+    private boolean isAvailable;
+    private boolean isVeg;
 
     public long getItemId() {
         return itemId;
@@ -55,5 +57,20 @@ public class Item {
         this.imageUrl = imageUrl;
     }
 
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
+    public boolean isVeg() {
+        return isVeg;
+    }
+
+    public void setVeg(boolean veg) {
+        isVeg = veg;
+    }
 }
 

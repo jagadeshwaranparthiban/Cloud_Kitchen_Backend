@@ -20,17 +20,14 @@ public class MenuService {
         this.itemRepo=itemRepo;
     }
 
-    String[] menu={"idly","dosa","briyani"};
-
     public List<Item> getItems(){
         return itemRepo.findAll();
     }
 
-    public String getItem(String name) {
-        for(String item: menu){
-            if(name.equals(item)) return "Item found: "+name;
-        }
-        return "Item not found";
+    public Item getItem(String name) {
+        Optional<Item> item=itemRepo.findByItemName(name);
+        if(item.isEmpty()) throw new ItemNotFoundException("Item "+name+" not found");
+        return item.get();
     }
 
     public void addItem(Item item){
@@ -50,5 +47,21 @@ public class MenuService {
             }
         }
         throw new ItemNotFoundException("Item not found");
+    }
+
+    public void setToAvailable(String itemName) {
+        Optional<Item> item=itemRepo.findByItemName(itemName);
+        if(item.isEmpty()) throw new ItemNotFoundException("Item not found");
+        Item updatedItem=item.get();
+        updatedItem.setAvailable(true);
+        itemRepo.save(updatedItem);
+    }
+
+    public void setToUnavailable(String itemName){
+        Optional<Item> item=itemRepo.findByItemName(itemName);
+        if(item.isEmpty()) throw new ItemNotFoundException("Item not found");
+        Item updatedItem=item.get();
+        updatedItem.setAvailable(false);
+        itemRepo.save(updatedItem);
     }
 }

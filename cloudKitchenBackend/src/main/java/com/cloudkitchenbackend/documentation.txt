@@ -18,3 +18,11 @@ Functionalities: ROLE_ADMIN
     3. Remove Item
     4. Modify Item (name, description, price)
     5. Manage users
+
+    need to be added:
+    1. Set availablity of food (available/unavailable)
+    2. Handle delivery agents
+    3. Manage ite inventory (items classified into various categories)
+
+functionalities: ROLE_DELIVERY_AGENT
+    1.

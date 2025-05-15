@@ -5,13 +5,13 @@ import com.cloudkitchenbackend.service.HomeService;
 import com.cloudkitchenbackend.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
+@RequestMapping("/item")
 public class HomeController {
 
     private MenuService menuService;
@@ -33,9 +33,9 @@ public class HomeController {
         return ResponseEntity.ok(menuService.getItems());
     }
 
-    @GetMapping("/item")
-    public String getItem(@RequestParam String name){
-        return menuService.getItem(name);
+    @GetMapping("/view")
+    public ResponseEntity<Item> getItem(@RequestParam String name){
+        return ResponseEntity.ok(menuService.getItem(name));
     }
 
     @PostMapping("/add")
@@ -49,5 +49,17 @@ public class HomeController {
     public ResponseEntity<String> deleteItemByName(@RequestParam String name){
         menuService.deleteItem(name);
         return ResponseEntity.ok("Item removed from menu");
+    }
+
+    @PutMapping("/set/available")
+    public ResponseEntity<String> setAvailable(@RequestParam String itemName){
+        menuService.setToAvailable(itemName);
+        return ResponseEntity.ok("Item: "+itemName+" set to available");
+    }
+
+    @PutMapping("/set/unavailable")
+    public ResponseEntity<String> setUnavailable(@RequestParam String itemName){
+        menuService.setToUnavailable(itemName);
+        return ResponseEntity.ok("Item: "+itemName+" set to Unavailable");
     }
 }

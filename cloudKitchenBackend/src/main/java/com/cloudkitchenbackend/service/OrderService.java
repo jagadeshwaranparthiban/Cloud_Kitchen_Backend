@@ -1,13 +1,7 @@
 package com.cloudkitchenbackend.service;
 
-import com.cloudkitchenbackend.dto.ItemInfoDto;
-import com.cloudkitchenbackend.dto.OrderCancelRequest;
-import com.cloudkitchenbackend.dto.OrderRequestDto;
-import com.cloudkitchenbackend.dto.OrderResponseDto;
-import com.cloudkitchenbackend.exception.InvalidCustomerException;
-import com.cloudkitchenbackend.exception.ItemNotFoundException;
-import com.cloudkitchenbackend.exception.OrderNotFoundException;
-import com.cloudkitchenbackend.exception.UserNotFoundException;
+import com.cloudkitchenbackend.dto.*;
+import com.cloudkitchenbackend.exception.*;
 import com.cloudkitchenbackend.model.Item;
 import com.cloudkitchenbackend.model.OrderItem;
 import com.cloudkitchenbackend.model.Orders;
@@ -16,7 +10,6 @@ import com.cloudkitchenbackend.repository.ItemRepo;
 import com.cloudkitchenbackend.repository.OrderItemRepo;
 import com.cloudkitchenbackend.repository.OrdersRepo;
 import com.cloudkitchenbackend.repository.UserRepo;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +47,7 @@ public class OrderService {
         for(ItemInfoDto itemInfo: requestedOrder.getItems()){
             Item item = itemRepo.findByItemName(itemInfo.getItemName())
                     .orElseThrow(() -> new ItemNotFoundException("Item not found: " + itemInfo.getItemName()));
-            //if(!item.isAvailable()) throw new RuntimeException("Item "+item.getItemName()+" is currently unavailable");
+            if(!item.isAvailable()) throw new ItemUnavailableException("Item "+item.getItemName()+" is currently unavailable");
 
             OrderItem orderItem=new OrderItem();
             orderItem.setOrder(order);
@@ -97,5 +90,25 @@ public class OrderService {
     public double refundAmount(Orders order){
         double amt=order.getTotalCost();
         return amt-(0.1*amt);
+    }
+
+    public OrdersDisplayDto getOrder(long orderId) {
+        Optional<Orders> order=ordersRepo.findByOrderId(orderId);
+        if(order.isEmpty()) throw new OrderNotFoundException("Order with id: "+orderId+" not found");
+        List<OrderItem> orderItems=order.get().getOrderItems();
+
+        OrdersDisplayDto response=new OrdersDisplayDto();
+        response.setOrderId(orderId);
+        response.setTotalCost(order.get().getTotalCost());
+        List<ItemInfoDto> itemList=new ArrayList<>();
+        for(OrderItem orderItem: orderItems){
+            Item item=orderItem.getItem();
+            ItemInfoDto itemInfo=new ItemInfoDto();
+            itemInfo.setItemName(item.getItemName());
+            itemInfo.setQty(orderItem.getQuantity());
+            itemList.add(itemInfo);
+        }
+        response.setItems(itemList);
+        return response;
     }
 }

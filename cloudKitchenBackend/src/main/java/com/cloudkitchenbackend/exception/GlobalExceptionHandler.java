@@ -41,4 +41,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleInvalidCustomerException(InvalidCustomerException ex){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+    @ExceptionHandler(ItemUnavailableException.class)
+    public ResponseEntity<String> handleItemUnavailableException(ItemUnavailableException ex){
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 }
