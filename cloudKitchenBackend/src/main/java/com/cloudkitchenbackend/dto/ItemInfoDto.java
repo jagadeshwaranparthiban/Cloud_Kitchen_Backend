@@ -26,4 +26,5 @@ public class ItemInfoDto {
     public void setQty(int qty) {
         this.qty = qty;
     }
+
 }

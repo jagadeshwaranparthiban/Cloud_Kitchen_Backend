@@ -100,12 +100,15 @@ public class OrderService {
         OrdersDisplayDto response=new OrdersDisplayDto();
         response.setOrderId(orderId);
         response.setTotalCost(order.get().getTotalCost());
-        List<ItemInfoDto> itemList=new ArrayList<>();
+        response.setTax(order.get().getTax());
+
+        List<ItemInfoDisplayDto> itemList=new ArrayList<>();
         for(OrderItem orderItem: orderItems){
             Item item=orderItem.getItem();
-            ItemInfoDto itemInfo=new ItemInfoDto();
+            ItemInfoDisplayDto itemInfo=new ItemInfoDisplayDto();
             itemInfo.setItemName(item.getItemName());
             itemInfo.setQty(orderItem.getQuantity());
+            itemInfo.setCost(orderItem.getItemTotalCost());
             itemList.add(itemInfo);
         }
         response.setItems(itemList);

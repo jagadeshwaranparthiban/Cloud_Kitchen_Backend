@@ -12,8 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 public class OrdersDisplayDto {
     private long orderId;
-    private List<ItemInfoDto> items;
+    private List<ItemInfoDisplayDto> items;
     private double totalCost;
+    private double tax;
 
     public long getOrderId() {
         return orderId;
@@ -23,11 +24,11 @@ public class OrdersDisplayDto {
         this.orderId = orderId;
     }
 
-    public List<ItemInfoDto> getItems() {
+    public List<ItemInfoDisplayDto> getItems() {
         return items;
     }
 
-    public void setItems(List<ItemInfoDto> items) {
+    public void setItems(List<ItemInfoDisplayDto> items) {
         this.items = items;
     }
 
@@ -37,5 +38,13 @@ public class OrdersDisplayDto {
 
     public void setTotalCost(double totalCost) {
         this.totalCost = totalCost;
+    }
+
+    public double getTax() {
+        return tax;
+    }
+
+    public void setTax(double tax) {
+        this.tax = tax;
     }
 }
