@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
+@RequestMapping("/order")
 public class OrderController {
     private OrderService orderService;
 
@@ -23,17 +23,17 @@ public class OrderController {
         this.orderService=orderService;
     }
 
-    @PostMapping("/place_order")
+    @PostMapping("/place")
     public ResponseEntity<OrderResponseDto> placeOrder(@RequestBody OrderRequestDto order){
         return ResponseEntity.ok(orderService.createOrder(order));
     }
 
-    @PutMapping("/cancel_order")
+    @PutMapping("/cancel")
     public ResponseEntity<String> cancelOrder(@RequestBody OrderCancelRequest cancel_request){
         return ResponseEntity.ok(orderService.cancelOrder(cancel_request));
     }
 
-    @GetMapping("/view_order")
+    @GetMapping("/view")
     public ResponseEntity<OrdersDisplayDto> viewOrders(@RequestParam long orderId){
         return ResponseEntity.ok(orderService.getOrder(orderId));
     }
