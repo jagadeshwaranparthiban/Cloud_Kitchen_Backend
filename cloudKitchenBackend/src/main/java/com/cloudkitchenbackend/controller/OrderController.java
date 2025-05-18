@@ -5,6 +5,7 @@ import com.cloudkitchenbackend.dto.OrderRequestDto;
 import com.cloudkitchenbackend.dto.OrderResponseDto;
 import com.cloudkitchenbackend.dto.OrdersDisplayDto;
 import com.cloudkitchenbackend.model.Orders;
+import com.cloudkitchenbackend.service.EmailService;
 import com.cloudkitchenbackend.service.OrderService;
 import org.hibernate.query.Order;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/order")
 public class OrderController {
     private OrderService orderService;
+    private EmailService emailService;
 
     @Autowired
-    public OrderController(OrderService orderService){
+    public OrderController(OrderService orderService, EmailService emailService){
         this.orderService=orderService;
+        this.emailService=emailService;
+    }
+
+    @PostMapping("/send_mail")
+    public ResponseEntity<String> sendEmail(){
+        String res=emailService.sendOrderConfirmationMail("230701120@rajalakshmi.edu.in",
+                "CKitchen: Order confirmation", "Order recieved successfully!");
+        return ResponseEntity.ok(res);
     }
 
     @PostMapping("/place")
