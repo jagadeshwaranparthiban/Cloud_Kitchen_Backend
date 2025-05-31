@@ -13,7 +13,7 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public String sendOrderConfirmationMail(String toEmail, String sub, String body){
+    public void sendOrderConfirmationMail(String toEmail, String sub, String body){
         SimpleMailMessage msg=new SimpleMailMessage();
         msg.setFrom(fromEmail);
         msg.setSubject(sub);
@@ -21,6 +21,15 @@ public class EmailService {
         msg.setTo(toEmail);
 
         mailSender.send(msg);
-        return "Mail sent to: "+toEmail;
+    }
+
+    public void sendOrderCancellationMail(String toEmail, double refund){
+        SimpleMailMessage msg=new SimpleMailMessage();
+        msg.setTo(toEmail);
+        msg.setFrom(fromEmail);
+        msg.setText("Order cancelled successfully. \n\nRs."+refund+" will be refunded within few hours.");
+        msg.setSubject("ORDER CANCELLATION");
+
+        mailSender.send(msg);
     }
 }

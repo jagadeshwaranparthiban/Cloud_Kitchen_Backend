@@ -26,12 +26,12 @@ public class OrderController {
         this.emailService=emailService;
     }
 
-    @PostMapping("/send_mail")
-    public ResponseEntity<String> sendEmail(){
-        String res=emailService.sendOrderConfirmationMail("230701120@rajalakshmi.edu.in",
-                "CKitchen: Order confirmation", "Order recieved successfully!");
-        return ResponseEntity.ok(res);
-    }
+//    @PostMapping("/send_mail")
+//    public ResponseEntity<String> sendEmail(){
+//        String res=emailService.sendOrderConfirmationMail("230701120@rajalakshmi.edu.in",
+//                "CKitchen: Order confirmation", "Order recieved successfully!");
+//        return ResponseEntity.ok(res);
+//    }
 
     @PostMapping("/place")
     public ResponseEntity<OrderResponseDto> placeOrder(@RequestBody OrderRequestDto order){

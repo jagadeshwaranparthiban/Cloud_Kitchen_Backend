@@ -24,14 +24,16 @@ public class OrderService {
     private ItemRepo itemRepo;
     private OrderItemRepo orderItemRepo;
     private UserRepo userRepo;
+    private EmailService emailService;
 
     @Autowired
     public OrderService(OrdersRepo ordersRepo, ItemRepo itemRepo, OrderItemRepo orderItemRepo,
-                        UserRepo userRepo){
+                        UserRepo userRepo, EmailService emailService){
         this.ordersRepo=ordersRepo;
         this.itemRepo=itemRepo;
         this.orderItemRepo=orderItemRepo;
         this.userRepo=userRepo;
+        this.emailService=emailService;
     }
 
     public OrderResponseDto createOrder(OrderRequestDto requestedOrder) {
@@ -64,6 +66,9 @@ public class OrderService {
         order.setTax(tax);
 
         ordersRepo.save(order);
+        emailService.sendOrderConfirmationMail(customer.get().getEmail(),
+                "ORDER CONFIRMATION",
+                "Order placed successfully.\n\n Your order ID: "+order.getOrderId()+". Use this to view your order status.");
         return new OrderResponseDto(
                 order.getOrderId(),
                 order.getTotalCost(),
@@ -79,11 +84,13 @@ public class OrderService {
         }if(!order.get().getCustomerName().equals(cancel_request.getCustomerName())){
             throw new InvalidCustomerException("Invalid Customer");
         }
+        Optional<Users> costumer=userRepo.findByUserName(cancel_request.getCustomerName());
         long cancelOrderId=order.get().getOrderId();
         double refund=refundAmount(order.get());
 
         orderItemRepo.deleteByOrderId(cancelOrderId);
         ordersRepo.delete(order.get());
+        emailService.sendOrderCancellationMail(costumer.get().getEmail(), refund);
         return "Order cancelled successfully. Your refund: Rs."+refund;
     }
 

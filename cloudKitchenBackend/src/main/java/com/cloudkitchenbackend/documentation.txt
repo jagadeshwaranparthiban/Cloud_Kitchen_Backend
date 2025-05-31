@@ -11,6 +11,10 @@ Functionalities: ROLE_USER
         input: Customer name, order ID
         output: On valid cancellation,
                 cancellation message
+    5. View order status
+        input: order ID
+        output: on valid order ID,
+                order ID, items ordered (item, qty, cost), total cost(inc. tax), tax
 
 Functionalities: ROLE_ADMIN
     1. View menu items
@@ -18,11 +22,21 @@ Functionalities: ROLE_ADMIN
     3. Remove Item
     4. Modify Item (name, description, price)
     5. Manage users
+    6. Set availablity of food (available/unavailable)
 
-    need to be added:
-    1. Set availablity of food (available/unavailable)
+features for ROLE_USER:
+    1. Recieve mail for order confirmation and cancellation
+
+need to be added:
+    1. Introduce role: delivery agent
     2. Handle delivery agents
-    3. Manage ite inventory (items classified into various categories)
-
-functionalities: ROLE_DELIVERY_AGENT
-    1.
+    3. Manage item inventory (items classified into various categories)
+    4. View items according to categories (veg/non veg/beverage/dessert,etc)
+    5. View order history (ROLE_USER)
+    6. Add timestamp for orders
+    7. functionalities: ROLE_DELIVERY_AGENT
+           1. Register (with special procedure)
+           2. Accept delivery
+           3. Cancel delivery
+           4. View analytics
+    8. view analytics (ROLE_ADMIN)
