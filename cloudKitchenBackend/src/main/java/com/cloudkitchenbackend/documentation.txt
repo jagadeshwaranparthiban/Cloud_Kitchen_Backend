@@ -1,4 +1,4 @@
-Cloud Kitchen Application Backend
+CLOUD KITCHEN APPLICATION BACKEND
 
 Functionalities: ROLE_USER
     1. Register
@@ -23,6 +23,8 @@ Functionalities: ROLE_ADMIN
     4. Modify Item (name, description, price)
     5. Manage users
     6. Set availablity of food (available/unavailable)
+    7. Add new discount code
+    8. Remove discount code/ deactivate
 
 features for ROLE_USER:
     1. Recieve mail for order confirmation and cancellation
@@ -40,3 +42,5 @@ need to be added:
            3. Cancel delivery
            4. View analytics
     8. view analytics (ROLE_ADMIN)
+    9. avail discount for orders (ROLE_USER)
+    10. Password resetting feature
