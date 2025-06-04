@@ -1,5 +1,6 @@
 package com.cloudkitchenbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,6 +25,7 @@ public class Discount {
     private double discountValue;
     private double minLevel;
     private DiscountStatus status;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime issuedAt;
     private int maxUsage;
     private int currentUsage;

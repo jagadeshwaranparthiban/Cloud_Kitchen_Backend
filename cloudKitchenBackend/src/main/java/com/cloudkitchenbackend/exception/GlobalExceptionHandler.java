@@ -46,4 +46,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleItemUnavailableException(ItemUnavailableException ex){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+    @ExceptionHandler(DiscountCodeNotFoundException.class)
+    public ResponseEntity<String> handleDiscountCodeNotFoundException(DiscountCodeNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 }
