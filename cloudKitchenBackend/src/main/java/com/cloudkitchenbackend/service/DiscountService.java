@@ -8,12 +8,13 @@ import com.cloudkitchenbackend.repository.DiscountRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class DiscountService {
 
-    private DiscountRepo discountRepo;
+    private final DiscountRepo discountRepo;
 
     @Autowired
     public DiscountService(DiscountRepo discountRepo){
@@ -57,5 +58,11 @@ public class DiscountService {
         discountRepo.save(discount);
 
         return "discount: "+discount.getDiscountCode()+" set to status: "+status;
+    }
+
+    public boolean isEligibleForDiscount(double orderCost){
+        Optional<Discount> discounts=discountRepo.findBestEligibleDiscount(orderCost);
+        if(discounts.isEmpty()) return false;
+        return true;
     }
 }

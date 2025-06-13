@@ -29,12 +29,13 @@ public class OrderService {
 
     @Autowired
     public OrderService(OrdersRepo ordersRepo, ItemRepo itemRepo, OrderItemRepo orderItemRepo,
-                        UserRepo userRepo, EmailService emailService){
+                        UserRepo userRepo, EmailService emailService, DiscountService discountService){
         this.ordersRepo=ordersRepo;
         this.itemRepo=itemRepo;
         this.orderItemRepo=orderItemRepo;
         this.userRepo=userRepo;
         this.emailService=emailService;
+        this.discountService=discountService;
     }
 
     public OrderResponseDto createOrder(OrderRequestDto requestedOrder) {
@@ -61,7 +62,6 @@ public class OrderService {
             total += orderItem.getItemTotalCost();
             orderItemList.add(orderItem);
         }
-        boolean isEligibleForDiscount;
 
         double tax=total*0.05;
         order.setOrderItems(orderItemList);
@@ -73,12 +73,13 @@ public class OrderService {
         emailService.sendOrderConfirmationMail(customer.get().getEmail(),
                 "ORDER CONFIRMATION",
                 "Order placed successfully.\n\n Your order ID: "+order.getOrderId()+". Use this to view your order status.");
+
         return new OrderResponseDto(
                 order.getOrderId(),
                 order.getTotalCost(),
                 "Order placed successfully",
                 order.getTax(),
-                false
+                discountService.isEligibleForDiscount(order.getTotalCost())
         );
     }
 
