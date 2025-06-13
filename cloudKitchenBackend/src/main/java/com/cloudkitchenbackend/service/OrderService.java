@@ -2,10 +2,7 @@ package com.cloudkitchenbackend.service;
 
 import com.cloudkitchenbackend.dto.*;
 import com.cloudkitchenbackend.exception.*;
-import com.cloudkitchenbackend.model.Item;
-import com.cloudkitchenbackend.model.OrderItem;
-import com.cloudkitchenbackend.model.Orders;
-import com.cloudkitchenbackend.model.Users;
+import com.cloudkitchenbackend.model.*;
 import com.cloudkitchenbackend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -126,5 +123,43 @@ public class OrderService {
         }
         response.setItems(itemList);
         return response;
+    }
+
+    public DiscountApplyResponseDto applyDiscount(long orderId, String discountCode) {
+        Optional<Orders> orderResponse=ordersRepo.findByOrderId(orderId);
+        if(orderResponse.isEmpty()){
+            throw new OrderNotFoundException("Order with ID: "+orderId+" not found.");
+        }
+
+        Orders order=orderResponse.get();
+        Discount discount=discountService.getDiscount(discountCode);
+        if(discount.getStatus()==DiscountStatus.INACTIVE || discount.getStatus()==DiscountStatus.EXPIRED){
+            throw new InvalidDiscountException("Discount currently inactive or expired.");
+        }
+        if(discount.getCurrentUsage() >= discount.getMaxUsage()){
+            discountService.setDiscountStatus(discount.getDiscountId(), DiscountStatus.EXPIRED);
+            throw new DiscountReachedMaximumUsersException("Discount reached maximum use limit");
+        }
+
+        DiscountApplyResponseDto res=new DiscountApplyResponseDto();
+        double oldCost=order.getTotalCost();
+        double newCost;
+        res.setOldPrice(oldCost);
+        res.setDiscountCode(discountCode);
+        res.setOrderId(orderId);
+        res.setDiscountCode(discountCode);
+        if(discount.getDiscountType()==DiscountType.FLAT){
+            newCost=oldCost-discount.getDiscountValue();
+        }else{
+            newCost=oldCost - (oldCost*(discount.getDiscountValue()/100));
+        }
+
+        res.setNewPrice(newCost);
+        res.setStatus("Discount Applied Successfully");
+        order.setTotalCost(newCost);
+        order.setDiscountCode(discountCode);
+        ordersRepo.save(order);
+        discountService.incrementUsage(discount.getDiscountId());
+        return res;
     }
 }

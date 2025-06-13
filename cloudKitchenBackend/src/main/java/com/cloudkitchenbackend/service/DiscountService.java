@@ -8,7 +8,6 @@ import com.cloudkitchenbackend.repository.DiscountRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,6 +42,7 @@ public class DiscountService {
             res.setCurrentUsage(discount.get().getCurrentUsage());
             res.setMaxusage(discount.get().getMaxUsage());
             res.setStatus(discount.get().getStatus());
+            res.setDiscountType(discount.get().getDiscountType());
             return res;
         }
         throw new DiscountCodeNotFoundException("Discount code not found.");
@@ -64,5 +64,26 @@ public class DiscountService {
         Optional<Discount> discounts=discountRepo.findBestEligibleDiscount(orderCost);
         if(discounts.isEmpty()) return false;
         return true;
+    }
+
+    public Discount getBestDiscount(double orderCost){
+        return discountRepo.findBestEligibleDiscount(orderCost).get();
+    }
+
+    public Discount getDiscount(String discountCode) {
+        Optional<Discount> discount=discountRepo.findByDiscountCode(discountCode);
+        if(discount.isEmpty()){
+            throw new DiscountCodeNotFoundException("Discount with code: "+discountCode+" not found.");
+        }
+        return discount.get();
+    }
+
+    public void incrementUsage(long discountId) {
+        Optional<Discount> discount=discountRepo.findById(discountId);
+        Discount oldDiscount=discount.get();
+        oldDiscount.setCurrentUsage(oldDiscount.getCurrentUsage()+1);
+        if(oldDiscount.getCurrentUsage()>=oldDiscount.getMaxUsage()){
+            setDiscountStatus(discountId, DiscountStatus.EXPIRED);
+        }
     }
 }

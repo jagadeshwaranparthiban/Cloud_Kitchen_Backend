@@ -1,6 +1,7 @@
 package com.cloudkitchenbackend.dto;
 
 import com.cloudkitchenbackend.model.DiscountStatus;
+import com.cloudkitchenbackend.model.DiscountType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class ViewDiscountDto {
     private int currentUsage;
     private int maxusage;
     private DiscountStatus status;
+    private DiscountType discountType;
 
     public long getDiscountId() {
         return discountId;
@@ -53,5 +55,13 @@ public class ViewDiscountDto {
 
     public void setStatus(DiscountStatus status) {
         this.status = status;
+    }
+
+    public DiscountType getDiscountType() {
+        return discountType;
+    }
+
+    public void setDiscountType(DiscountType discountType) {
+        this.discountType = discountType;
     }
 }
