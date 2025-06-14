@@ -140,6 +140,9 @@ public class OrderService {
             discountService.setDiscountStatus(discount.getDiscountId(), DiscountStatus.EXPIRED);
             throw new DiscountReachedMaximumUsersException("Discount reached maximum use limit");
         }
+        if(discount.getMinLevel()>order.getTotalCost()){
+            throw new InvalidDiscountException("Discount code cannot be applied for this order");
+        }
 
         DiscountApplyResponseDto res=new DiscountApplyResponseDto();
         double oldCost=order.getTotalCost();
@@ -155,7 +158,7 @@ public class OrderService {
         }
 
         res.setNewPrice(newCost);
-        res.setStatus("Discount Applied Successfully");
+        res.setStatus("SUCCESSFULL");
         order.setTotalCost(newCost);
         order.setDiscountCode(discountCode);
         ordersRepo.save(order);

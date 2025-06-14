@@ -1,6 +1,7 @@
 package com.cloudkitchenbackend.util;
 
 import com.cloudkitchenbackend.model.Role;
+import com.cloudkitchenbackend.model.Users;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -20,7 +21,7 @@ public class JWTUtil {
     private final String secret="This-is-A-Sample-SeCrEt-07142128@*";
     private final SecretKey key= Keys.hmacShaKeyFor(secret.getBytes());
     private final long expiration=1000*60*10; //10 minutes
-
+    
     public String generateToken(String userName){
 
         return Jwts.builder()
