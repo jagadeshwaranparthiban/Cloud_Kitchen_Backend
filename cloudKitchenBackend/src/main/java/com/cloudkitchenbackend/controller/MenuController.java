@@ -20,11 +20,6 @@ public class MenuController {
         this.menuService=menuService;
     }
 
-    @GetMapping("/")
-    public String home(){
-        return "Hello world";
-    }
-
     @GetMapping("/menu")
     public ResponseEntity<List<Item>> getMenu(){
         return ResponseEntity.ok(menuService.getItems());

@@ -11,12 +11,14 @@ public class OrderResponseDto {
     private double totalCost;
     private String status;
     private double tax;
+    private boolean isEligibleForDiscount;
 
-    public OrderResponseDto(long orderId, double totalCost, String status, double tax) {
+    public OrderResponseDto(long orderId, double totalCost, String status, double tax, boolean isEligibleForDiscount) {
         this.orderId = orderId;
         this.totalCost = totalCost;
         this.status = status;
         this.tax = tax;
+        this.isEligibleForDiscount = isEligibleForDiscount;
     }
 
     public long getOrderId() {
@@ -49,5 +51,13 @@ public class OrderResponseDto {
 
     public void setTax(double tax) {
         this.tax = tax;
+    }
+
+    public boolean isEligibleForDiscount() {
+        return isEligibleForDiscount;
+    }
+
+    public void setEligibleForDiscount(boolean eligibleForDiscount) {
+        isEligibleForDiscount = eligibleForDiscount;
     }
 }

@@ -1,9 +1,6 @@
 package com.cloudkitchenbackend.controller;
 
-import com.cloudkitchenbackend.dto.OrderCancelRequest;
-import com.cloudkitchenbackend.dto.OrderRequestDto;
-import com.cloudkitchenbackend.dto.OrderResponseDto;
-import com.cloudkitchenbackend.dto.OrdersDisplayDto;
+import com.cloudkitchenbackend.dto.*;
 import com.cloudkitchenbackend.model.Orders;
 import com.cloudkitchenbackend.service.EmailService;
 import com.cloudkitchenbackend.service.OrderService;
@@ -46,5 +43,10 @@ public class OrderController {
     @GetMapping("/view")
     public ResponseEntity<OrdersDisplayDto> viewOrders(@RequestParam long orderId){
         return ResponseEntity.ok(orderService.getOrder(orderId));
+    }
+
+    @PostMapping("/add_discount")
+    public ResponseEntity<DiscountApplyResponseDto> addDiscount(@RequestParam long orderId, @RequestParam String discountCode){
+        return ResponseEntity.ok(orderService.applyDiscount(orderId, discountCode));
     }
 }

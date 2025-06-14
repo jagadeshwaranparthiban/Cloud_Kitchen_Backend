@@ -46,4 +46,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleItemUnavailableException(ItemUnavailableException ex){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+    @ExceptionHandler(DiscountCodeNotFoundException.class)
+    public ResponseEntity<String> handleDiscountCodeNotFoundException(DiscountCodeNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidDiscountException.class)
+    public ResponseEntity<String> handleInvalidDiscountException(InvalidDiscountException ex){
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(DiscountReachedMaximumUsersException.class)
+    public ResponseEntity<String> handleDiscountReachedMaximumUsersException(DiscountReachedMaximumUsersException ex){
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 }
