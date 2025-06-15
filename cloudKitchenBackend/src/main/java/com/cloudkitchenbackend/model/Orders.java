@@ -27,6 +27,7 @@ public class Orders {
     private double tax;
     private double totalCost;
     private String discountCode;
+    private OrderStatus orderStatus;
 
     public long getOrderId() {
         return orderId;
@@ -82,5 +83,13 @@ public class Orders {
 
     public void setDiscountCode(String discountCode) {
         this.discountCode = discountCode;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }

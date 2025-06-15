@@ -1,5 +1,6 @@
 package com.cloudkitchenbackend.dto;
 
+import com.cloudkitchenbackend.model.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,11 +10,11 @@ import lombok.NoArgsConstructor;
 public class OrderResponseDto {
     private long orderId;
     private double totalCost;
-    private String status;
+    private OrderStatus status;
     private double tax;
     private boolean isEligibleForDiscount;
 
-    public OrderResponseDto(long orderId, double totalCost, String status, double tax, boolean isEligibleForDiscount) {
+    public OrderResponseDto(long orderId, double totalCost, OrderStatus status, double tax, boolean isEligibleForDiscount) {
         this.orderId = orderId;
         this.totalCost = totalCost;
         this.status = status;
@@ -37,11 +38,11 @@ public class OrderResponseDto {
         this.totalCost = totalCost;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus (OrderStatus status) {
         this.status = status;
     }
 
