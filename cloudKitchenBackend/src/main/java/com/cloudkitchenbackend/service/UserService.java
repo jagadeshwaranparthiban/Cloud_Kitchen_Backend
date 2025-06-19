@@ -47,7 +47,7 @@ public class UserService {
             String token=jwtUtil.generateToken(loginCred.getUserName());
             return token;
         }catch (BadCredentialsException ex) {
-            return "Invalid username or password";
+            throw new BadCredentialsException("Invalid username or password");
         }
 //        Optional<Users> userName=userRepo.findByUserName(loginCred.getUserName());
 //        if(userName.isEmpty()) throw new UserNotFoundException("User not found. Sign up!");
@@ -60,7 +60,7 @@ public class UserService {
 
     public String RegisterUser(NewUserDto newUserData){
         Optional<Users> emailId=userRepo.findByEmail(newUserData.getEmailId());
-        System.out.println(emailId);
+        System.out.println(emailId.get().getUserName());
         if(emailId.isPresent()) throw new UserAlreadyExistsException("User with emailID: "+emailId.get().getEmail()+" already exists.");
         String newUserId=generateUserId();
 
