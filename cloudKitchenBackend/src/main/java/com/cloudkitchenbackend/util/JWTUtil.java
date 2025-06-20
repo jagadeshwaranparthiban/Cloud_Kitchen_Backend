@@ -14,10 +14,9 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static java.lang.reflect.Array.get;
 
 @Component
 public class JWTUtil {
@@ -32,8 +31,8 @@ public class JWTUtil {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateToken(String userName){
 
+    public String generateToken(String userName){
         return Jwts.builder()
                 .setSubject(userName)
                 .setIssuedAt(new Date())

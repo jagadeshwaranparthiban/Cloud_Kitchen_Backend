@@ -3,6 +3,7 @@ package com.cloudkitchenbackend.service;
 import com.cloudkitchenbackend.dto.NewUserDto;
 import com.cloudkitchenbackend.dto.SuccessfulResponse;
 import com.cloudkitchenbackend.dto.UserLoginDto;
+import com.cloudkitchenbackend.exception.InvalidRoleException;
 import com.cloudkitchenbackend.exception.UserAlreadyExistsException;
 import com.cloudkitchenbackend.exception.UserNotFoundException;
 import com.cloudkitchenbackend.model.Role;
@@ -45,14 +46,15 @@ public class UserService {
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginCred.getUserName(), loginCred.getPassword()));
-            String token=jwtUtil.generateToken(loginCred.getUserName());
-            return new SuccessfulResponse(token);
+            Optional<Users> user=userRepo.findByUserName(loginCred.getUserName());
+            if(user.get().getRole().equals(loginCred.getRole())){
+                String token=jwtUtil.generateToken(loginCred.getUserName());
+                return new SuccessfulResponse(token);
+            }
+            throw new InvalidRoleException("Invalid Role!");
         }catch (BadCredentialsException ex) {
             throw new BadCredentialsException("Invalid username or password");
         }
-//        Optional<Users> userName=userRepo.findByUserName(loginCred.getUserName());
-//        if(userName.isEmpty()) throw new UserNotFoundException("User not found. Sign up!");
-//        return "Logged in as: "+userName.get().getUserName()+", role: "+userName.get().getRole();
     }
 
     public String generateUserId(){

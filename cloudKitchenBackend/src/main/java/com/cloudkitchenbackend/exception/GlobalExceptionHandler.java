@@ -68,4 +68,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleBadCredentialsException(BadCredentialsException ex){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(ex.getMessage()));
     }
+
+    @ExceptionHandler(InvalidRoleException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidRoleException(InvalidRoleException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(ex.getMessage()));
+    }
 }
