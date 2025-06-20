@@ -1,6 +1,7 @@
 package com.cloudkitchenbackend.service;
 
 import com.cloudkitchenbackend.dto.NewUserDto;
+import com.cloudkitchenbackend.dto.SuccessfulResponse;
 import com.cloudkitchenbackend.dto.UserLoginDto;
 import com.cloudkitchenbackend.exception.UserAlreadyExistsException;
 import com.cloudkitchenbackend.exception.UserNotFoundException;
@@ -58,10 +59,16 @@ public class UserService {
         return UUID.randomUUID().toString().replace("-","").substring(1,12);
     }
 
-    public String RegisterUser(NewUserDto newUserData){
-        Optional<Users> emailId=userRepo.findByEmail(newUserData.getEmailId());
-        System.out.println(emailId.get().getUserName());
-        if(emailId.isPresent()) throw new UserAlreadyExistsException("User with emailID: "+emailId.get().getEmail()+" already exists.");
+    public SuccessfulResponse RegisterUser(NewUserDto newUserData){
+        Optional<Users> user=userRepo.findByEmail(newUserData.getEmailId());
+        Optional<Users> currUser=userRepo.findByUserName(newUserData.getUserName());
+        if(user.isPresent()){
+            throw new UserAlreadyExistsException("User with emailID: "+user.get().getEmail()+" already exists.");
+        }
+        if(currUser.isPresent()){
+            throw new UserAlreadyExistsException("Username: "+newUserData.getUserName()+" already exists.");
+        }
+
         String newUserId=generateUserId();
 
         userRepo.save(new Users(newUserId,
@@ -70,6 +77,6 @@ public class UserService {
                 passwordEncoder.encode(newUserData.getPassword()),
                 newUserData.getRole()
         ));
-        return "User "+newUserData.getUserName()+" registered successfylly! Login now!";
+        return new SuccessfulResponse("User "+newUserData.getUserName()+" registered successfylly! Login now!");
     }
 }

@@ -1,6 +1,7 @@
 package com.cloudkitchenbackend.controller;
 
 import com.cloudkitchenbackend.dto.NewUserDto;
+import com.cloudkitchenbackend.dto.SuccessfulResponse;
 import com.cloudkitchenbackend.dto.UserLoginDto;
 import com.cloudkitchenbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerNewUser(@RequestBody NewUserDto userCred){
+    public ResponseEntity<SuccessfulResponse> registerNewUser(@RequestBody NewUserDto userCred){
         return ResponseEntity.ok(userService.RegisterUser(userCred));
     }
 }

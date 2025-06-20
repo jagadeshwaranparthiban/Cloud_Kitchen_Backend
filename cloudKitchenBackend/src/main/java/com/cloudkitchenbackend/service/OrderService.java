@@ -80,7 +80,7 @@ public class OrderService {
         );
     }
 
-    public String cancelOrder(OrderCancelRequest cancel_request){
+    public SuccessfulResponse cancelOrder(OrderCancelRequest cancel_request){
         Optional<Orders> order=ordersRepo.findByOrderId(cancel_request.getOrderId());
         if(order.isEmpty()){
             throw new OrderNotFoundException("Order ID: "+cancel_request.getOrderId()+" not found.");
@@ -94,7 +94,7 @@ public class OrderService {
         orderItemRepo.deleteByOrderId(cancelOrderId);
         ordersRepo.delete(order.get());
         emailService.sendOrderCancellationMail(costumer.get().getEmail(), refund);
-        return "Order cancelled successfully. Your refund: Rs."+refund;
+        return new SuccessfulResponse("Order cancelled successfully. Your refund: Rs."+refund);
     }
 
     public double refundAmount(Orders order){
