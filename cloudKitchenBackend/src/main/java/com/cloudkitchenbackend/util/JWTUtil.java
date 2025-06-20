@@ -6,11 +6,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.security.Key;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,10 +21,17 @@ import java.util.Map;
 
 @Component
 public class JWTUtil {
-    private final String secret="This-is-A-Sample-SeCrEt-07142128@*";
-    private final SecretKey key= Keys.hmacShaKeyFor(secret.getBytes());
+
+    @Value("${spring.jwt.secret}")
+    private String secret;
+    private SecretKey key;
     private final long expiration=1000*60*10; //10 minutes
-    
+
+    @PostConstruct
+    public void init() {
+        key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
+
     public String generateToken(String userName){
 
         return Jwts.builder()
