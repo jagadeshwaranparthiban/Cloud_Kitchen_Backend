@@ -41,12 +41,12 @@ public class UserService {
         this.passwordEncoder=passwordEncoder;
     }
 
-    public String authUser(UserLoginDto loginCred){
+    public SuccessfulResponse authUser(UserLoginDto loginCred){
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginCred.getUserName(), loginCred.getPassword()));
             String token=jwtUtil.generateToken(loginCred.getUserName());
-            return token;
+            return new SuccessfulResponse(token);
         }catch (BadCredentialsException ex) {
             throw new BadCredentialsException("Invalid username or password");
         }
