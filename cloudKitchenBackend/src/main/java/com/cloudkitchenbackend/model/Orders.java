@@ -27,6 +27,8 @@ public class Orders {
     private double tax;
     private double totalCost;
     private String discountCode;
+
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     public long getOrderId() {

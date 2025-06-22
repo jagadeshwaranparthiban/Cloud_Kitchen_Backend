@@ -1,10 +1,7 @@
 package com.cloudkitchenbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,10 +18,15 @@ public class Discount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long discountId;
     private String discountCode;
+
+    @Enumerated(EnumType.STRING)
     private DiscountType discountType;
     private double discountValue;
     private double minLevel;
+
+    @Enumerated(EnumType.STRING)
     private DiscountStatus status;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime issuedAt;
     private int maxUsage;

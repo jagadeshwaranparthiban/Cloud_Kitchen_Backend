@@ -1,6 +1,8 @@
 package com.cloudkitchenbackend.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +24,8 @@ public class Users implements UserDetails {
     private String userName;
     private String email;
     private String password;
+
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     public Users(){}
