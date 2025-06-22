@@ -85,5 +85,6 @@ public class DiscountService {
         if(oldDiscount.getCurrentUsage()>=oldDiscount.getMaxUsage()){
             setDiscountStatus(discountId, DiscountStatus.EXPIRED);
         }
+        discountRepo.save(oldDiscount);
     }
 }
