@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +73,7 @@ public class OrderService {
         return new OrderResponseDto(
                 order.getOrderId(),
                 order.getTotalCost(),
-                "Order placed successfully",
+                OrderStatus.PENDING,
                 order.getTax(),
                 discountService.isEligibleForDiscount(order.getTotalCost())
         );
@@ -88,17 +87,18 @@ public class OrderService {
             throw new InvalidCustomerException("Invalid Customer");
         }
         Optional<Users> costumer=userRepo.findByUserName(cancel_request.getCustomerName());
-        long cancelOrderId=order.get().getOrderId();
-        double refund=refundAmount(order.get());
+        Orders cancelOrder=order.get();
+        double refund=refundAmount(cancelOrder.getTotalCost());
 
-        orderItemRepo.deleteByOrderId(cancelOrderId);
-        ordersRepo.delete(order.get());
+//        orderItemRepo.deleteByOrderId(cancelOrderId);
+//        ordersRepo.delete(order.get());
+        cancelOrder.setOrderStatus(OrderStatus.CANCELLED);
+        ordersRepo.save(cancelOrder);
         emailService.sendOrderCancellationMail(costumer.get().getEmail(), refund);
         return new SuccessfulResponse("Order cancelled successfully. Your refund: Rs."+refund);
     }
 
-    public double refundAmount(Orders order){
-        double amt=order.getTotalCost();
+    public double refundAmount(double amt){
         return amt-(0.1*amt);
     }
 
@@ -111,6 +111,7 @@ public class OrderService {
         response.setOrderId(orderId);
         response.setTotalCost(order.get().getTotalCost());
         response.setTax(order.get().getTax());
+        response.setStatus(order.get().getOrderStatus());
 
         List<ItemInfoDisplayDto> itemList=new ArrayList<>();
         for(OrderItem orderItem: orderItems){

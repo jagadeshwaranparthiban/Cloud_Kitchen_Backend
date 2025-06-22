@@ -1,6 +1,7 @@
 package com.cloudkitchenbackend.dto;
 
 import com.cloudkitchenbackend.model.Item;
+import com.cloudkitchenbackend.model.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class OrdersDisplayDto {
     private long orderId;
+    private OrderStatus status;
     private List<ItemInfoDisplayDto> items;
     private double totalCost;
     private double tax;
@@ -46,5 +48,13 @@ public class OrdersDisplayDto {
 
     public void setTax(double tax) {
         this.tax = tax;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 }
