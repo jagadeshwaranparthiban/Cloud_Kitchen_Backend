@@ -73,4 +73,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleInvalidRoleException(InvalidRoleException ex){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(ex.getMessage()));
     }
+
+    @ExceptionHandler(PaymentFailedException.class)
+    public ResponseEntity<ExceptionResponse> handlePaymentFailedException(PaymentFailedException ex){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ExceptionResponse(ex.getMessage()));
+    }
 }
