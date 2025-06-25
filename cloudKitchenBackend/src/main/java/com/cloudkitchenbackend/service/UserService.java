@@ -57,7 +57,7 @@ public class UserService {
         }
     }
 
-    private String generateUserId(){
+    public String generateUserId(){
         return UUID.randomUUID().toString().replace("-","").substring(1,12);
     }
 
