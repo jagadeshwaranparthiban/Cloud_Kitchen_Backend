@@ -13,13 +13,17 @@ public class OrderResponseDto {
     private OrderStatus status;
     private double tax;
     private boolean isEligibleForDiscount;
+    private String paymentgatewayInfo;
 
-    public OrderResponseDto(long orderId, double totalCost, OrderStatus status, double tax, boolean isEligibleForDiscount) {
+    public OrderResponseDto(long orderId, double totalCost,
+                            OrderStatus status, double tax,
+                            boolean isEligibleForDiscount, String paymentgatewayInfo) {
         this.orderId = orderId;
         this.totalCost = totalCost;
         this.status = status;
         this.tax = tax;
         this.isEligibleForDiscount = isEligibleForDiscount;
+        this.paymentgatewayInfo=paymentgatewayInfo;
     }
 
     public long getOrderId() {
@@ -60,5 +64,13 @@ public class OrderResponseDto {
 
     public void setEligibleForDiscount(boolean eligibleForDiscount) {
         isEligibleForDiscount = eligibleForDiscount;
+    }
+
+    public String getPaymentgatewayInfo() {
+        return paymentgatewayInfo;
+    }
+
+    public void setPaymentgatewayInfo(String paymentgatewayInfo) {
+        this.paymentgatewayInfo = paymentgatewayInfo;
     }
 }
