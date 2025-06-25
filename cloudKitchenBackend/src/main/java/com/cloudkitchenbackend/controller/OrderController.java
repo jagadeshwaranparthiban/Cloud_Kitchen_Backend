@@ -1,9 +1,11 @@
 package com.cloudkitchenbackend.controller;
 
 import com.cloudkitchenbackend.dto.*;
+import com.cloudkitchenbackend.exception.PaymentFailedException;
 import com.cloudkitchenbackend.model.Orders;
 import com.cloudkitchenbackend.service.EmailService;
 import com.cloudkitchenbackend.service.OrderService;
+import com.razorpay.RazorpayException;
 import org.hibernate.query.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +34,11 @@ public class OrderController {
 
     @PostMapping("/place")
     public ResponseEntity<OrderResponseDto> placeOrder(@RequestBody OrderRequestDto order){
-        return ResponseEntity.ok(orderService.createOrder(order));
+        try{
+            return ResponseEntity.ok(orderService.createOrder(order));
+        }catch(RazorpayException ex){
+            throw new PaymentFailedException(ex.getMessage());
+        }
     }
 
     @PutMapping("/cancel")

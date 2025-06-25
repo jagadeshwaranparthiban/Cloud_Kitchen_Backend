@@ -4,6 +4,7 @@ import com.cloudkitchenbackend.dto.*;
 import com.cloudkitchenbackend.exception.*;
 import com.cloudkitchenbackend.model.*;
 import com.cloudkitchenbackend.repository.*;
+import com.razorpay.RazorpayException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,19 +23,22 @@ public class OrderService {
     private UserRepo userRepo;
     private EmailService emailService;
     private DiscountService discountService;
+    private PaymentService paymentService;
 
     @Autowired
     public OrderService(OrdersRepo ordersRepo, ItemRepo itemRepo, OrderItemRepo orderItemRepo,
-                        UserRepo userRepo, EmailService emailService, DiscountService discountService){
+                        UserRepo userRepo, EmailService emailService,
+                        DiscountService discountService, PaymentService paymentService){
         this.ordersRepo=ordersRepo;
         this.itemRepo=itemRepo;
         this.orderItemRepo=orderItemRepo;
         this.userRepo=userRepo;
         this.emailService=emailService;
         this.discountService=discountService;
+        this.paymentService=paymentService;
     }
 
-    public OrderResponseDto createOrder(OrderRequestDto requestedOrder) {
+    public OrderResponseDto createOrder(OrderRequestDto requestedOrder) throws RazorpayException{
         String custName=requestedOrder.getCustomerName();
         Optional<Users> customer=userRepo.findByUserName(custName);
         if(customer.isEmpty()) throw new UserNotFoundException("Invalid user!");
@@ -64,8 +68,13 @@ public class OrderService {
         order.setTotalCost(total+tax);
         order.setTax(tax);
         order.setOrderTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+        order.setOrderStatus(OrderStatus.PENDING);
         ordersRepo.save(order);
 
+        String paymentInfo = paymentService.createPaymentOrder(new PaymentOrderRequestDto(
+                order.getOrderId(),
+                "order_"+order.getOrderId()
+        ));
         emailService.sendOrderConfirmationMail(customer.get().getEmail(),
                 "ORDER CONFIRMATION",
                 "Order placed successfully.\n\n Your order ID: "+order.getOrderId()+". Use this to view your order status.");
@@ -75,7 +84,8 @@ public class OrderService {
                 order.getTotalCost(),
                 OrderStatus.PENDING,
                 order.getTax(),
-                discountService.isEligibleForDiscount(order.getTotalCost())
+                discountService.isEligibleForDiscount(order.getTotalCost()),
+                paymentInfo
         );
     }
 
