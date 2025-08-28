@@ -1,5 +1,6 @@
 package com.cloudkitchenbackend.service;
 
+import com.cloudkitchenbackend.dto.ItemResponseDto;
 import com.cloudkitchenbackend.exception.ItemAlreadyExistsException;
 import com.cloudkitchenbackend.exception.ItemNotFoundException;
 import com.cloudkitchenbackend.model.Item;
@@ -19,8 +20,16 @@ public class MenuService {
         this.itemRepo=itemRepo;
     }
 
-    public List<Item> getItems(){
-        return itemRepo.findAll();
+    public List<ItemResponseDto> getItems(){
+        List<Item> items =  itemRepo.findAll();
+        if(items.isEmpty()) throw new ItemNotFoundException("No items found in menu");
+        List<ItemResponseDto> res=new ArrayList<>();
+        for(Item item: items){
+            ItemResponseDto i = new ItemResponseDto(item.getItemName(), item.getDescription(),
+                    item.getImageUrl(), item.getPrice(), item.isVeg());
+            res.add(i);
+        }
+        return res;
     }
 
     public Item getItem(String name) {

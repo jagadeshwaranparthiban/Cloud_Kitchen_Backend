@@ -1,5 +1,6 @@
 package com.cloudkitchenbackend.controller;
 
+import com.cloudkitchenbackend.dto.ItemResponseDto;
 import com.cloudkitchenbackend.model.Item;
 import com.cloudkitchenbackend.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class MenuController {
     }
 
     @GetMapping("/menu")
-    public ResponseEntity<List<Item>> getMenu(){
+    public ResponseEntity<List<ItemResponseDto>> getMenu(){
         return ResponseEntity.ok(menuService.getItems());
     }
 
