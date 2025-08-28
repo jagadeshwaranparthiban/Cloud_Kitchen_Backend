@@ -16,6 +16,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: cloud_kitchen_backend
     depends_on:
       - postgres
     environment:
