@@ -1,5 +1,6 @@
 package com.cloudkitchenbackend.controller;
 
+import com.cloudkitchenbackend.dto.ItemResponseDto;
 import com.cloudkitchenbackend.dto.NewUserDto;
 import com.cloudkitchenbackend.dto.SuccessfulResponse;
 import com.cloudkitchenbackend.dto.UserLoginDto;
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @GetMapping("/menu")
-    public ResponseEntity<List<Item>> getMenu(){
+    public ResponseEntity<List<ItemResponseDto>> getMenu(){
         return ResponseEntity.ok(menuService.getItems());
     }
 }
