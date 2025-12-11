@@ -21,4 +21,13 @@ public interface OrdersRepo extends JpaRepository<Orders,Long> {
             "FROM Orders o " +
             "WHERE o.orderTime >= :dayStart AND o.orderTime < :dayEnd")
     List<Object[]> findDailyAnalytics(LocalDateTime dayStart, LocalDateTime dayEnd);
+
+    @Query(value = """
+        SELECT EXTRACT(MONTH FROM order_time)::int AS month_num, COUNT(*) AS cnt
+        FROM orders
+        WHERE EXTRACT(YEAR FROM order_time) = EXTRACT(YEAR FROM CURRENT_DATE)
+        GROUP BY month_num
+        ORDER BY month_num
+        """, nativeQuery = true)
+    List<Object[]> findMonthlyAnalytics();
 }
