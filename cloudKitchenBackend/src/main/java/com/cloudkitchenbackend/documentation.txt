@@ -33,14 +33,15 @@ need to be added:
     1. Introduce role: delivery agent
     2. Handle delivery agents
     3. Manage item inventory (items classified into various categories)
-    4. View items according to categories (veg/non veg/beverage/dessert,etc)
+    4. View items according to category (veg/non veg/beverage/dessert,etc)
     5. View order history (ROLE_USER)
     6. Add timestamp for orders
     7. functionalities: ROLE_DELIVERY_AGENT
            1. Register (with special procedure)
-           2. Accept delivery
-           3. Cancel delivery
-           4. View analytics
+           2. Sign in
+           3. Accept delivery
+           4. Cancel delivery
+           5. View analytics
     8. view analytics (ROLE_ADMIN)
     9. avail discount for orders (ROLE_USER)
     10. Password resetting feature
