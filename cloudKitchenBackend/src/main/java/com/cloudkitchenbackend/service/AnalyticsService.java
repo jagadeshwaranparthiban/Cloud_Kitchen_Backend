@@ -1,5 +1,6 @@
 package com.cloudkitchenbackend.service;
 
+import com.cloudkitchenbackend.dto.MonthlyAnalyticsDto;
 import com.cloudkitchenbackend.dto.WeeklyAnalyticsDto;
 import com.cloudkitchenbackend.repository.ItemRepo;
 import com.cloudkitchenbackend.repository.OrdersRepo;
@@ -7,9 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.Month;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class AnalyticsService {
@@ -58,5 +60,31 @@ public class AnalyticsService {
             System.out.println("Error occured with analytics service"+ex.getMessage());
         }
         return analytics;
+    }
+
+    public List<MonthlyAnalyticsDto> getMonthlyAnalytics() {
+        try{
+            List<Object[]> rows = ordersRepo.findMonthlyAnalytics();
+
+            // convert DB rows to map: monthNumber -> count
+            Map<Integer, Long> counts = new HashMap<>();
+            for (Object[] row : rows) {
+                Integer monthNum = ((Number) row[0]).intValue();   // 1..12
+                Long cnt = ((Number) row[1]).longValue();
+                counts.put(monthNum, cnt);
+            }
+
+            // Create a list of 12 MonthCount entries (JANUARY..DECEMBER) with zero defaults
+            return IntStream.rangeClosed(1, 12)
+                    .mapToObj(i -> {
+                        String monthName = Month.of(i).name(); // e.g. "JANUARY"
+                        long orderCount = counts.getOrDefault(i, 0L);
+                        return new MonthlyAnalyticsDto(monthName, orderCount);
+                    })
+                    .collect(Collectors.toList());
+        }catch(Exception ex) {
+            System.out.println("Error occured with analytics service"+ex.getMessage());
+            return null;
+        }
     }
 }
