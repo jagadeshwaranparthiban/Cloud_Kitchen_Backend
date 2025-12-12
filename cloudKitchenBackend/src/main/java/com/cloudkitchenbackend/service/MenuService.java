@@ -6,6 +6,7 @@ import com.cloudkitchenbackend.exception.ItemNotFoundException;
 import com.cloudkitchenbackend.model.Item;
 import com.cloudkitchenbackend.repository.ItemRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,7 +27,7 @@ public class MenuService {
         List<ItemResponseDto> res=new ArrayList<>();
         for(Item item: items){
             ItemResponseDto i = new ItemResponseDto(item.getItemName(), item.getDescription(),
-                    item.getImageUrl(), item.getPrice(), item.isVeg());
+                    item.getImageUrl(), item.getPrice(), item.isVeg(), item.getCategory());
             res.add(i);
         }
         return res;

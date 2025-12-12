@@ -1,8 +1,12 @@
 package com.cloudkitchenbackend.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.*;
+
+import java.io.Serializable;
 
 @Entity
 @NoArgsConstructor
@@ -16,6 +20,17 @@ public class Item {
     private double price;
     private boolean isAvailable;
     private boolean isVeg;
+
+    @Enumerated(EnumType.STRING)
+    private ItemCategory category;
+
+    public ItemCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(ItemCategory category) {
+        this.category = category;
+    }
 
     public long getItemId() {
         return itemId;
