@@ -1,5 +1,6 @@
 package com.cloudkitchenbackend.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.*;
@@ -14,7 +15,9 @@ public class Item {
     private String description;
     private String imageUrl;
     private double price;
+    @Column(name = "is_available")
     private boolean available;
+    @Column(name = "is_veg")
     private boolean veg;
 
     public long getItemId() {
