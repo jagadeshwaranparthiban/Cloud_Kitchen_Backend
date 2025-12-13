@@ -14,8 +14,8 @@ public class Item {
     private String description;
     private String imageUrl;
     private double price;
-    private boolean isAvailable;
-    private boolean isVeg;
+    private boolean available;
+    private boolean veg;
 
     public long getItemId() {
         return itemId;
@@ -58,19 +58,19 @@ public class Item {
     }
 
     public boolean isAvailable() {
-        return isAvailable;
+        return available;
     }
 
     public void setAvailable(boolean available) {
-        isAvailable = available;
+        this.available = available;
     }
 
     public boolean isVeg() {
-        return isVeg;
+        return veg;
     }
 
     public void setVeg(boolean veg) {
-        isVeg = veg;
+        this.veg = veg;
     }
 }
 
