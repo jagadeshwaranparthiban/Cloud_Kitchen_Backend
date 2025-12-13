@@ -1,5 +1,8 @@
 package com.cloudkitchenbackend.controller;
 
+import com.cloudkitchenbackend.dto.DiscountInfoDto;
+import com.cloudkitchenbackend.dto.OrderRequestDto;
+import com.cloudkitchenbackend.dto.ValidDiscountsDto;
 import com.cloudkitchenbackend.dto.ViewDiscountDto;
 import com.cloudkitchenbackend.model.Discount;
 import com.cloudkitchenbackend.model.DiscountStatus;
@@ -7,6 +10,8 @@ import com.cloudkitchenbackend.service.DiscountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/discount")
@@ -39,4 +44,11 @@ public class DiscountController {
         return ResponseEntity.ok(discountService.setDiscountStatus(id, status));
     }
 
+    public ResponseEntity<ValidDiscountsDto> getValidDiscounts(@RequestBody double orderCost) {
+        List<Discount> discount = discountService.getBestDiscount(orderCost);
+        List<DiscountInfoDto> validDiscounts = discount.stream().map(d -> {
+            return new DiscountInfoDto(d.getDiscountCode(),d.getDiscountType(), d.getDiscountValue());
+        }).toList();
+        return ResponseEntity.ok(new ValidDiscountsDto(validDiscounts));
+    }
 }
