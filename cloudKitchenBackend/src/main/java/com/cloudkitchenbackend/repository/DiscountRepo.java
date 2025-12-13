@@ -22,8 +22,8 @@ public interface DiscountRepo extends JpaRepository<Discount, Long> {
     Optional<Discount> findTopByOrderByMinLevelAsc();
 
     @Transactional
-    @Query("SELECT d FROM Discount d WHERE :orderCost >= d.minLevel ORDER BY d.minLevel DESC LIMIT 1")
-    Optional<Discount> findBestEligibleDiscount(@Param("orderCost") double orderCost);
+    @Query("SELECT d FROM Discount d WHERE :orderCost >= d.minLevel ORDER BY d.minLevel DESC LIMIT 3")
+    Optional<List<Discount>> findBestEligibleDiscount(@Param("orderCost") double orderCost);
 
     Optional<Discount> findByDiscountCode(String discountCode);
 }

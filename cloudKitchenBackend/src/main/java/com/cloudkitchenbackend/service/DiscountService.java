@@ -8,6 +8,8 @@ import com.cloudkitchenbackend.repository.DiscountRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -61,13 +63,17 @@ public class DiscountService {
     }
 
     public boolean isEligibleForDiscount(double orderCost){
-        Optional<Discount> discounts=discountRepo.findBestEligibleDiscount(orderCost);
+        Optional<List<Discount>> discounts=discountRepo.findBestEligibleDiscount(orderCost);
         if(discounts.isEmpty()) return false;
         return true;
     }
 
-    public Discount getBestDiscount(double orderCost){
-        return discountRepo.findBestEligibleDiscount(orderCost).get();
+    public List<Discount> getBestDiscount(double orderCost){
+        if(isEligibleForDiscount(orderCost)) {
+            Optional<List<Discount>> discounts = discountRepo.findBestEligibleDiscount(orderCost);
+            return discounts.get();
+        }
+        return new ArrayList<>();
     }
 
     public Discount getDiscount(String discountCode) {
