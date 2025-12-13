@@ -44,7 +44,8 @@ public class DiscountController {
         return ResponseEntity.ok(discountService.setDiscountStatus(id, status));
     }
 
-    public ResponseEntity<ValidDiscountsDto> getValidDiscounts(@RequestBody double orderCost) {
+    @GetMapping("/get")
+    public ResponseEntity<ValidDiscountsDto> getValidDiscounts(@RequestParam double orderCost) {
         List<Discount> discount = discountService.getBestDiscount(orderCost);
         List<DiscountInfoDto> validDiscounts = discount.stream().map(d -> {
             return new DiscountInfoDto(d.getDiscountCode(),d.getDiscountType(), d.getDiscountValue());
