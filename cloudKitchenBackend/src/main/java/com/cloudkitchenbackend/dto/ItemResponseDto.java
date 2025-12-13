@@ -1,5 +1,7 @@
 package com.cloudkitchenbackend.dto;
 
 
-public record ItemResponseDto(String itemName, String desc, String image, Double price, boolean isVeg) {
+import com.cloudkitchenbackend.model.ItemCategory;
+
+public record ItemResponseDto(String itemName, String desc, String image, Double price, boolean isVeg, ItemCategory category) {
 }
