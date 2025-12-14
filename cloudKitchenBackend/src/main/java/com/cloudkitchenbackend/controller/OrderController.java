@@ -51,8 +51,8 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrder(orderId));
     }
 
-    @PostMapping("/add_discount")
-    public ResponseEntity<DiscountApplyResponseDto> addDiscount(@RequestParam long orderId, @RequestParam String discountCode){
-        return ResponseEntity.ok(orderService.applyDiscount(orderId, discountCode));
-    }
+//    @PostMapping("/add_discount")
+//    public ResponseEntity<DiscountApplyResponseDto> addDiscount(@RequestParam long orderId, @RequestParam String discountCode){
+//        return ResponseEntity.ok(orderService.applyDiscount(orderId, discountCode));
+//    }
 }

@@ -1,10 +1,9 @@
 package com.cloudkitchenbackend.controller;
 
-import com.cloudkitchenbackend.dto.ItemResponseDto;
-import com.cloudkitchenbackend.dto.NewUserDto;
-import com.cloudkitchenbackend.dto.SuccessfulResponse;
-import com.cloudkitchenbackend.dto.UserLoginDto;
+import com.cloudkitchenbackend.dto.*;
+import com.cloudkitchenbackend.model.Discount;
 import com.cloudkitchenbackend.model.Item;
+import com.cloudkitchenbackend.service.DiscountService;
 import com.cloudkitchenbackend.service.MenuService;
 import com.cloudkitchenbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +17,13 @@ import java.util.List;
 public class UserController {
     private UserService userService;
     private MenuService menuService;
+    private DiscountService discountService;
 
     @Autowired
-    public UserController(UserService userService, MenuService menuService){
+    public UserController(UserService userService, MenuService menuService, DiscountService discountService){
         this.menuService=menuService;
         this.userService=userService;
+        this.discountService=discountService;
     }
 
     @PostMapping("/login")
@@ -43,5 +44,14 @@ public class UserController {
     @GetMapping("/menu")
     public ResponseEntity<List<ItemResponseDto>> getMenu(){
         return ResponseEntity.ok(menuService.getItems());
+    }
+
+    @GetMapping("/get_discounts")
+    public ResponseEntity<ValidDiscountsDto> getValidDiscounts(@RequestParam double orderCost) {
+        List<Discount> discount = discountService.getBestDiscount(orderCost);
+        List<DiscountInfoDto> validDiscounts = discount.stream().map(d -> {
+            return new DiscountInfoDto(d.getDiscountCode(),d.getDiscountType(), d.getDiscountValue());
+        }).toList();
+        return ResponseEntity.ok(new ValidDiscountsDto(validDiscounts));
     }
 }

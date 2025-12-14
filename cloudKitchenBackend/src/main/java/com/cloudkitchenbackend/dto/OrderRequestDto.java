@@ -14,6 +14,7 @@ import java.util.List;
 public class OrderRequestDto {
     private String customerName;
     private List<ItemInfoDto> items;
+    private String discountCode;
 
     public String getCustomerName() {
         return customerName;
@@ -29,5 +30,13 @@ public class OrderRequestDto {
 
     public void setItems(List<ItemInfoDto> items) {
         this.items = items;
+    }
+
+    public String getDiscountCode() {
+        return discountCode;
+    }
+
+    public void setDiscountCode(String discountCode) {
+        this.discountCode = discountCode;
     }
 }

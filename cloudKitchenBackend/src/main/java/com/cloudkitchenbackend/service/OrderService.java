@@ -63,9 +63,14 @@ public class OrderService {
             orderItemList.add(orderItem);
         }
 
-        double tax=total*0.05;
         order.setOrderItems(orderItemList);
-        order.setTotalCost(total+tax);
+        order.setTotalCost(total);
+
+        if(requestedOrder.getDiscountCode()!=null && !requestedOrder.getDiscountCode().isEmpty()){
+            applyDiscount(order, requestedOrder.getDiscountCode());
+        }
+
+        double tax=order.getTotalCost()*0.05;
         order.setTax(tax);
         order.setOrderTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         order.setOrderStatus(OrderStatus.PENDING);
@@ -79,12 +84,12 @@ public class OrderService {
                 "ORDER CONFIRMATION",
                 "Order placed successfully.\n\n Your order ID: "+order.getOrderId()+". Use this to view your order status.");
 
+
         return new OrderResponseDto(
                 order.getOrderId(),
                 order.getTotalCost(),
                 OrderStatus.PENDING,
                 order.getTax(),
-                discountService.isEligibleForDiscount(order.getTotalCost()),
                 paymentInfo
         );
     }
@@ -136,13 +141,7 @@ public class OrderService {
         return response;
     }
 
-    public DiscountApplyResponseDto applyDiscount(long orderId, String discountCode) {
-        Optional<Orders> orderResponse=ordersRepo.findByOrderId(orderId);
-        if(orderResponse.isEmpty()){
-            throw new OrderNotFoundException("Order with ID: "+orderId+" not found.");
-        }
-
-        Orders order=orderResponse.get();
+    public void applyDiscount(Orders order, String discountCode) {
         Discount discount=discountService.getDiscount(discountCode);
         if(discount.getStatus()==DiscountStatus.INACTIVE || discount.getStatus()==DiscountStatus.EXPIRED){
             throw new InvalidDiscountException("Discount currently inactive or expired.");
@@ -152,28 +151,17 @@ public class OrderService {
             throw new DiscountReachedMaximumUsersException("Discount reached maximum use limit");
         }
         if(discount.getMinLevel()>order.getTotalCost()){
+            System.out.println("discount min level: "+discount.getMinLevel());
+            System.out.println("order total cost: "+order.getTotalCost());
             throw new InvalidDiscountException("Discount code cannot be applied for this order");
         }
 
-        DiscountApplyResponseDto res=new DiscountApplyResponseDto();
-        double oldCost=order.getTotalCost();
-        double newCost;
-        res.setOldPrice(oldCost);
-        res.setDiscountCode(discountCode);
-        res.setOrderId(orderId);
-        res.setDiscountCode(discountCode);
         if(discount.getDiscountType()==DiscountType.FLAT){
-            newCost=oldCost-discount.getDiscountValue();
+            order.setTotalCost(order.getTotalCost()-discount.getDiscountValue());
         }else{
-            newCost=oldCost - (oldCost*(discount.getDiscountValue()/100));
+            order.setTotalCost(order.getTotalCost() - (order.getTotalCost()*(discount.getDiscountValue()/100)));
         }
-
-        res.setNewPrice(newCost);
-        res.setStatus("SUCCESSFULL");
-        order.setTotalCost(newCost);
         order.setDiscountCode(discountCode);
-        ordersRepo.save(order);
         discountService.incrementUsage(discount.getDiscountId());
-        return res;
     }
 }
