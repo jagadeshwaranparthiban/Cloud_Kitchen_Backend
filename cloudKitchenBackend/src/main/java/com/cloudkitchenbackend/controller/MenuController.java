@@ -31,9 +31,9 @@ public class MenuController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addItem(@RequestBody Item item){
-        menuService.addItem(item);
-        return ResponseEntity.ok("item added");
+    public ResponseEntity<Item> addItem(@RequestBody Item item){
+        //menuService.addItem(item);
+        return ResponseEntity.ok(menuService.addItem(item));
     }
 
     @DeleteMapping("/delete")

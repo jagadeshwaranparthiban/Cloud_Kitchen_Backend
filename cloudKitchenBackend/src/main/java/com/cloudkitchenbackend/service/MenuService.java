@@ -39,11 +39,12 @@ public class MenuService {
         return item.get();
     }
 
-    public void addItem(Item item){
+    public Item addItem(Item item){
         if(itemRepo.existsById(item.getItemId())){
             throw new ItemAlreadyExistsException("Item "+item.getItemName()+" already exists");
         }else{
-            itemRepo.save(item);
+            Item savedItem = itemRepo.save(item);
+            return savedItem;
         }
     }
 
