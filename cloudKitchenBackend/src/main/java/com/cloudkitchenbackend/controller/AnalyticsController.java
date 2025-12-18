@@ -1,6 +1,7 @@
 package com.cloudkitchenbackend.controller;
 
 import com.cloudkitchenbackend.dto.MonthlyAnalyticsDto;
+import com.cloudkitchenbackend.dto.RevenueMapperDto;
 import com.cloudkitchenbackend.dto.WeeklyAnalyticsDto;
 import com.cloudkitchenbackend.service.AnalyticsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,5 +32,10 @@ public class AnalyticsController {
     @GetMapping("/orders/monthly")
     public ResponseEntity<Map<String,List<MonthlyAnalyticsDto>>> getDailyAnalytics() {
         return ResponseEntity.ok(Map.of("data", analyticsService.getMonthlyAnalytics()));
+    }
+
+    @GetMapping("/orders/total_revenue")
+    public ResponseEntity<Map<String,List<RevenueMapperDto>>> getTotalRevenueByItem() {
+        return ResponseEntity.ok(Map.of("data",analyticsService.getTotalRevenueByItem()));
     }
 }

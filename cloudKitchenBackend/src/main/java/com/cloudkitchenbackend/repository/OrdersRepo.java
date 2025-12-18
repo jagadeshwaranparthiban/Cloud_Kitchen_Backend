@@ -1,5 +1,6 @@
 package com.cloudkitchenbackend.repository;
 
+import com.cloudkitchenbackend.dto.RevenueMapperDto;
 import com.cloudkitchenbackend.dto.WeeklyAnalyticsDto;
 import com.cloudkitchenbackend.model.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,4 +31,13 @@ public interface OrdersRepo extends JpaRepository<Orders,Long> {
         ORDER BY month_num
         """, nativeQuery = true)
     List<Object[]> findMonthlyAnalytics();
+
+    @Query("""
+            SELECT new com.cloudkitchenbackend.dto.RevenueMapperDto(oi.item.itemName, SUM(oi.quantity), SUM(oi.itemTotalCost))
+            FROM OrderItem oi
+            JOIN oi.item i
+            GROUP BY i.itemName
+            ORDER BY SUM(oi.itemTotalCost) DESC
+            """)
+    List<RevenueMapperDto> findTotalRevenueByItem();
 }

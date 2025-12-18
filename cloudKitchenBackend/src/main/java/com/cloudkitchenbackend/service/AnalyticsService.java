@@ -1,6 +1,7 @@
 package com.cloudkitchenbackend.service;
 
 import com.cloudkitchenbackend.dto.MonthlyAnalyticsDto;
+import com.cloudkitchenbackend.dto.RevenueMapperDto;
 import com.cloudkitchenbackend.dto.WeeklyAnalyticsDto;
 import com.cloudkitchenbackend.repository.ItemRepo;
 import com.cloudkitchenbackend.repository.OrdersRepo;
@@ -82,6 +83,15 @@ public class AnalyticsService {
                         return new MonthlyAnalyticsDto(monthName, orderCount);
                     })
                     .collect(Collectors.toList());
+        }catch(Exception ex) {
+            System.out.println("Error occured with analytics service"+ex.getMessage());
+            return null;
+        }
+    }
+
+    public List<RevenueMapperDto> getTotalRevenueByItem() {
+        try {
+            return ordersRepo.findTotalRevenueByItem();
         }catch(Exception ex) {
             System.out.println("Error occured with analytics service"+ex.getMessage());
             return null;
