@@ -27,13 +27,23 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<SuccessfulResponse> userLogin(@RequestBody UserLoginDto loginCred){
+    public ResponseEntity<AuthResponse> userLogin(@RequestBody UserLoginDto loginCred){
         return ResponseEntity.ok(userService.authUser(loginCred));
     }
 
     @PostMapping("/register")
     public ResponseEntity<SuccessfulResponse> registerNewUser(@RequestBody NewUserDto userCred){
         return ResponseEntity.ok(userService.RegisterUser(userCred));
+    }
+
+    @GetMapping("/refresh")
+    public ResponseEntity<AuthResponse> getRefreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDto) {
+        return ResponseEntity.ok(userService.getNewRefreshToken(refreshTokenRequestDto.refreshToken()));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<SuccessfulResponse> logOutUser(@RequestBody RefreshTokenRequestDto refreshTokenRequestDto) {
+        return ResponseEntity.ok(userService.logOutUser(refreshTokenRequestDto.refreshToken()));
     }
 
     @GetMapping("/view")

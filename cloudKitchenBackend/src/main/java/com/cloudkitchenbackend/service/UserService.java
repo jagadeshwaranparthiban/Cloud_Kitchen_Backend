@@ -1,11 +1,13 @@
 package com.cloudkitchenbackend.service;
 
+import com.cloudkitchenbackend.dto.AuthResponse;
 import com.cloudkitchenbackend.dto.NewUserDto;
 import com.cloudkitchenbackend.dto.SuccessfulResponse;
 import com.cloudkitchenbackend.dto.UserLoginDto;
 import com.cloudkitchenbackend.exception.InvalidRoleException;
 import com.cloudkitchenbackend.exception.UserAlreadyExistsException;
 import com.cloudkitchenbackend.exception.UserNotFoundException;
+import com.cloudkitchenbackend.model.RefreshToken;
 import com.cloudkitchenbackend.model.Role;
 import com.cloudkitchenbackend.model.Users;
 import com.cloudkitchenbackend.repository.UserRepo;
@@ -30,26 +32,29 @@ import java.util.UUID;
 public class UserService {
     private UserRepo userRepo;
     private JWTUtil jwtUtil;
+    private RefreshTokenService refreshTokenService;
     private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(UserRepo userRepo, JWTUtil jwtUtil, AuthenticationManager authenticationManager,
-    PasswordEncoder passwordEncoder){
+    PasswordEncoder passwordEncoder, RefreshTokenService refreshTokenService) {
         this.userRepo=userRepo;
         this.jwtUtil=jwtUtil;
+        this.refreshTokenService=refreshTokenService;
         this.authenticationManager=authenticationManager;
         this.passwordEncoder=passwordEncoder;
     }
 
-    public SuccessfulResponse authUser(UserLoginDto loginCred){
+    public AuthResponse authUser(UserLoginDto loginCred){
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginCred.getUserName(), loginCred.getPassword()));
             Optional<Users> user=userRepo.findByUserName(loginCred.getUserName());
             if(user.get().getRole().equals(loginCred.getRole())){
-                String token=jwtUtil.generateToken(loginCred.getUserName());
-                return new SuccessfulResponse(token);
+                String accessToken=jwtUtil.generateToken(loginCred.getUserName());
+                String refreshToken = refreshTokenService.generateRefreshToken(user.get().getEmail()).getRefreshToken();
+                return new AuthResponse(accessToken,refreshToken);
             }
             throw new InvalidRoleException("Invalid Role!");
         }catch (BadCredentialsException ex) {
@@ -80,5 +85,23 @@ public class UserService {
                 newUserData.getRole()
         ));
         return new SuccessfulResponse("User "+newUserData.getUserName()+" registered successfylly! Login now!");
+    }
+
+    public AuthResponse getNewRefreshToken(String refreshToken) {
+        RefreshToken storedToken = refreshTokenService.validateRefreshToken(refreshToken);
+        String accessToken = jwtUtil.generateToken(refreshToken);
+
+        refreshTokenService.deleteToken(refreshToken);
+        RefreshToken newRefreshToken = refreshTokenService.generateRefreshToken(storedToken.getUserEmail());
+
+        return new AuthResponse(
+                accessToken,
+                newRefreshToken.getRefreshToken()
+        );
+    }
+
+    public SuccessfulResponse logOutUser(String refreshToken) {
+        refreshTokenService.deleteToken(refreshToken);
+        return new SuccessfulResponse("Logged out successfully.");
     }
 }
