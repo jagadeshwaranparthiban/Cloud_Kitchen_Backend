@@ -1,0 +1,47 @@
+CLOUD KITCHEN APPLICATION BACKEND
+
+Functionalities: ROLE_USER
+    1. Register
+    2. View menu items
+    3. place order
+        input: customer name, items (item, quantity)
+        output: on valid order place,
+                order ID, total amount(including tax), tax, status
+    4. Cancel order
+        input: Customer name, order ID
+        output: On valid cancellation,
+                cancellation message
+    5. View order status
+        input: order ID
+        output: on valid order ID,
+                order ID, items ordered (item, qty, cost), total cost(inc. tax), tax
+
+Functionalities: ROLE_ADMIN
+    1. View menu items
+    2. Add Item
+    3. Remove Item
+    4. Modify Item (name, description, price)
+    5. Manage users
+    6. Set availablity of food (available/unavailable)
+    7. Add new discount code
+    8. Remove discount code/ deactivate
+
+features for ROLE_USER:
+    1. Recieve mail for order confirmation and cancellation
+
+need to be added:
+    1. Introduce role: delivery agent
+    2. Handle delivery agents
+    3. Manage item inventory (items classified into various categories)
+    4. View items according to category (veg/non veg/beverage/dessert,etc)
+    5. View order history (ROLE_USER)
+    6. Add timestamp for orders
+    7. functionalities: ROLE_DELIVERY_AGENT
+           1. Register (with special procedure)
+           2. Sign in
+           3. Accept delivery
+           4. Cancel delivery
+           5. View analytics
+    8. view analytics (ROLE_ADMIN)
+    9. avail discount for orders (ROLE_USER)
+    10. Password resetting feature
