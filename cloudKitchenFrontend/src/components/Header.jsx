@@ -1,15 +1,29 @@
 import React, { useState } from 'react';
 import ckitchen_logo from '../assets/ckitchen_logo.jpg';
 import AnimatedButton from './AnimatedButton';
+import api from '../services/api';
 
 const Header = ({title, signOutButtonRequired}) => {
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const doSignOut = () => {
-    localStorage.removeItem('jwt');
-    localStorage.removeItem('username');
-    localStorage.removeItem('cart');
-    window.location.href = '/landing';
+  const doSignOut = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refresh')
+      const signOutRes = await api.post('/logout', {
+        refreshToken: refreshToken
+      })
+      if(signOutRes.data.success) {
+        localStorage.removeItem('jwt');
+        localStorage.removeItem('refresh');
+        localStorage.removeItem('username');
+        localStorage.removeItem('cart');
+        window.location.href = '/landing';
+      }else if(signOutRes.data.exception) {
+        alert(signOutRes.data.exception)
+      }
+    }catch(ex) {
+        alert("An error has occured. Please try again later")
+    }
   }
 
   const handleSignOutClick = () => setShowConfirm(true);

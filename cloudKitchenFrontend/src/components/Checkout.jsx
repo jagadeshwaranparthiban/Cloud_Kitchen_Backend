@@ -1,24 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import Header from './Header'
 import AnimatedButton from './AnimatedButton'
 import checkoutIcon from '../icons/checkout-icon.gif'
 import DiscountCard from './DiscountCard'
 import DeliveryInfo from './DeliveryInfo'
-
-
-const getStoredToken = () => {
-  const raw = localStorage.getItem('jwt')
-  if (!raw) return null
-  try {
-    const parsed = JSON.parse(raw)
-    if (typeof parsed === 'string') return parsed
-    if (parsed?.token) return parsed.token
-    return parsed
-  } catch {
-    return raw
-  }
-}
+import api from '../services/api'
 
 const Checkout = () => {
   const [cart, setCart] = useState({ items: [] })
@@ -35,9 +21,6 @@ const Checkout = () => {
   const [customerInfo, setCustomerInfo] = useState({ name: '', phone: '', address: '', instructions: '' })
   const [promoError, setPromoError] = useState('')
   const [loadingDiscounts, setLoadingDiscounts] = useState(false)
-
-  const BASE_API_URL = 'http://localhost:5000' 
-  const token = getStoredToken()
   useEffect(() => {
     try {
       const raw = localStorage.getItem('cart')
@@ -51,18 +34,15 @@ const Checkout = () => {
   // Fetch available discounts from server when subtotal changes
   useEffect(() => {
     const fetchDiscounts = async () => {
-      if (subtotal === 0 || !token) {
+      if (subtotal === 0) {
         setAvailableDiscounts([])
         return
       }
 
       setLoadingDiscounts(true)
       try {
-        const response = await axios.get(`${BASE_API_URL}/get_discounts`, {
-          params: { orderCost: subtotal },
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+        const response = await api.get('/get_discounts', {
+          params: { orderCost: subtotal }
         })
         const rawDiscounts = response.data.validDiscounts || []
         const discounts = rawDiscounts.map((d) => ({
@@ -82,7 +62,7 @@ const Checkout = () => {
     // Debounce fetch to avoid excessive requests
     const timer = setTimeout(fetchDiscounts, 500)
     return () => clearTimeout(timer)
-  }, [subtotal, token])
+  }, [subtotal])
 
   useEffect(() => {
     const s = cart.items.reduce((sum, it) => sum + Number(it.totalCost), 0)
@@ -163,17 +143,18 @@ const Checkout = () => {
       discountCode: appliedCode,
     }
 
-    const response = await axios.post(`${BASE_API_URL}/order/place`, orderRequest, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    try {
+      const response = await api.post('/order/place', orderRequest)
+      console.log('Order response:', response.data)
+      if (paymentMethod !== 'WALLET') {
+        initiateRazorpayPayment()
+      } else {
+        // Cash on Delivery
+        completeOrder(response.data)
       }
-    })
-    console.log('Order response:', response.data)
-    if (paymentMethod !== 'WALLET') {
-      initiateRazorpayPayment()
-    } else {
-      // Cash on Delivery
-      completeOrder(response.data)
+    } catch (error) {
+      console.error('Failed to place order:', error)
+      alert('Failed to place order. Please try again.')
     }
   }
 

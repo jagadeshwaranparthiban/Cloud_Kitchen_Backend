@@ -1,14 +1,12 @@
 import React, { useState, useMemo } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'motion/react'
 import Menu from './Menu'
 import Loading from './Loading'
 import Header from './Header'
 import AnimatedButton from './AnimatedButton'
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+import api from '../services/api'
 
 const getStoredToken = () => {
   const raw = localStorage.getItem('jwt')
@@ -65,7 +63,7 @@ const HomePage = () => {
   const addToCart = (menuItem) => {
     if (!menuItem) return
     const itemName = menuItem.itemName || menuItem.name
-    const price = Number(menuItem.price || menuItem.cost || 0)
+    const price = Number(menuItem.price || 0)
     const itemImageUrl =  menuItem.image || ''
     const category = menuItem.category || 'Uncategorized'
 
@@ -80,7 +78,7 @@ const HomePage = () => {
     } else {
       next = { items: [...cart.items, { itemName, qty: 1, totalCost: Number(price.toFixed(2)), itemImageUrl: itemImageUrl, category:category }] }
     }
-    //console.log('Adding to cart:', menuItem, 'Next cart:', next)
+    
     persistCart(next)
   }
 
@@ -92,11 +90,7 @@ const HomePage = () => {
   } = useQuery({
     queryKey: ['fetchMenu'],
     queryFn: async () => {
-      const res = await axios.get(`${API_BASE_URL}/menu`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const res = await api.get('/menu')
       console.log('Fetched menu:', res.data)
       return res.data
     },

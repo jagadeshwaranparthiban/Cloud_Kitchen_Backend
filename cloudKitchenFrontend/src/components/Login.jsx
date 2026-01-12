@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
 import AnimatedButton from './AnimatedButton'
+import api from '../services/api'
 import bg from '../assets/CKitchen_Background.jpg'
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
 const getStoredToken = () => {
   const raw = localStorage.getItem('jwt')
@@ -40,13 +38,16 @@ const Login = () => {
     setError('')
     setLoading(true)
     try {
-      const res = await axios.post(`${API_BASE_URL}/login`, {
+      const res = await api.post('/login', {
         userName: username,
         password,
         role: `ROLE_${role}`,
       })
-      if (res.data.success) {
-        localStorage.setItem('jwt', typeof res.data.success === 'string' ? res.data.success : JSON.stringify(res.data.success))
+      if (res.data.accessToken) {
+        localStorage.setItem('jwt', typeof res.data.accessToken === 'string' ? res.data.accessToken : JSON.stringify(res.data.accessToken))
+
+        localStorage.setItem('refresh', typeof res.data.refreshToken === 'string' ? res.data.refreshToken : JSON.stringify(res.data.refreshToken))
+
         localStorage.setItem('username', username)
         if (role === 'ADMIN') {
           navigate('/admin')
@@ -78,7 +79,7 @@ const Login = () => {
     setError('')
     setLoading(true)
     try {
-      const res = await axios.post(`${API_BASE_URL}/register`, {
+      const res = await api.post('/register', {
         userName: username,
         emailId,
         password,

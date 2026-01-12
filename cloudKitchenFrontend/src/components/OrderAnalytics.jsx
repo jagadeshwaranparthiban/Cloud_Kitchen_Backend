@@ -1,11 +1,9 @@
 import React from 'react'
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import Loading from './Loading'
 import { motion } from 'motion/react'
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+import api from '../services/api'
 
 const getStoredToken = () => {
   const raw = localStorage.getItem('jwt')
@@ -85,11 +83,7 @@ const OrderAnalytics = () => {
   } = useQuery({
     queryKey: ['orderAnalytics', weekData[0].date, weekData[6].date],
     queryFn: async () => {
-      console.log(token)
-      const res = await axios.get(`${API_BASE_URL}/analytics/orders/weekly`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const res = await api.get('/analytics/orders/weekly', {
         params: {
           startDate: weekData[0].date,
           endDate: weekData[6].date,
